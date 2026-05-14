@@ -1,6 +1,8 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -11,8 +13,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ["email", "password", "username"]
 
     def validate_email(self, value):
-        if not value:
-            raise serializers.ValidationError("Email é obrigatório")
+        value = value.lower().strip()
+
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email já está em uso")
+
         return value
 
     def validate_password(self, value):
