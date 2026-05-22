@@ -3,35 +3,45 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "http://localhost:8000/api",
   headers: {
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json",
   },
-  withCredentials: true
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
-    (config) => config,
-    (erro) => Promise.reject(erro)
-)
+  (config) => config,
+  (erro) => Promise.reject(erro),
+);
 
 api.interceptors.response.use(
-    (resposta) => resposta,
-    async (erro) => {
-        const original = erro.config
+  (resposta) => resposta,
+  async (erro) => {
+    const original = erro.config;
 
-        if (erro.response?.status === 401 && !original._retry) {
-            original._retry = true
+    if (!erro.response || !original) return Promise.reject(erro);
 
-            try {
-                await api.post('/auth/refresh/')
-                return api(original)
+    const status = erro.response.status;
+    const url = original.url || "";
 
-            } catch {
-                window.location.href = '/login'
-                return Promise.reject(erro)
-            }
-        }
-        return Promise.reject(erro)
+    const isAuthRoute =
+      url.includes("/users/auth/login/") ||
+      url.includes("/users/auth/logout/") ||
+      url.includes("/users/auth/register/") ||
+      url.includes("/users/auth/refresh/") ||
+      url.includes("/users/auth/me/");
+
+    if (status !== 401 || original._retry || isAuthRoute)
+      return Promise.reject(erro);
+
+    original._retry = true;
+
+    try {
+      await api.post("/users/auth/refresh/");
+      return api(original);
+    } catch (refreshError) {
+      return Promise.reject(refreshError);
     }
-)
+  },
+);
 
 export default api;
