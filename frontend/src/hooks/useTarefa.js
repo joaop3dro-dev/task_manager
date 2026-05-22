@@ -15,8 +15,9 @@ export function useTarefas() {
       setLoading(true);
       try {
         const { data } = await getTarefas();
-        setTarefas(data);
-      } catch (e) {
+        console.log(data)
+        setTarefas(data.results);
+      } catch {
         setErro("Erro ao carregar tarefas");
       } finally {
         setLoading(false);
@@ -25,13 +26,13 @@ export function useTarefas() {
     carregar();
   }, []);
 
-  const adicionarTarefa = useCallback(async (texto) => {
-    const { data } = await postTarefa(texto);
+  const adicionarTarefa = useCallback(async (dataTask) => {
+    const { data } = await postTarefa(dataTask);
     setTarefas((prev) => [...prev, data]);
   }, []);
 
-  const concluirTarefa = useCallback(async (id, concluida) => {
-    const { data } = await patchTarefa(id, { concluida: !concluida });
+  const concluirTarefa = useCallback(async (id) => {
+    const { data } = await patchTarefa(id, { status: 'completed' });
     setTarefas((prev) => prev.map((t) => (t.id === id ? data : t)));
   }, []);
 
@@ -40,7 +41,14 @@ export function useTarefas() {
     setTarefas((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  return { tarefas, adicionarTarefa, concluirTarefa, deletarTarefa, loading, erro };
+  return {
+    tarefas,
+    adicionarTarefa,
+    concluirTarefa,
+    deletarTarefa,
+    loading,
+    erro,
+  };
 }
 
 export default useTarefas;

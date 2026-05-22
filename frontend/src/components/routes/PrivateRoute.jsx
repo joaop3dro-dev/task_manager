@@ -1,10 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 
 function PrivateRoute({ children }) {
-  const { usuario } = useAuth();
+  const { authStatus } = useAuth();
 
-  if (!usuario) return <Navigate to="/login" />;
+  if (authStatus === "unknown") return <p>Verificando sessão...</p>;
+  if (authStatus !== "authenticated") return <Navigate to="/login" />;
 
   return children;
 }

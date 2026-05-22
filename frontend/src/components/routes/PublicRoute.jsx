@@ -1,9 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-function PublicRoute({ children }) {
-  const { usuario } = useAuth();
+import { useAuth } from "../../hooks/useAuth";
 
-  if (usuario) return <Navigate to="/" />;
+function PublicRoute({ children }) {
+  const { authStatus } = useAuth();
+
+  if (authStatus === "unknown") return <p>Verificando sessão...</p>;
+  if (authStatus === "authenticated") return <Navigate to="/" />;
 
   return children;
 }
