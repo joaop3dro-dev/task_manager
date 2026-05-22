@@ -1,9 +1,14 @@
-from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 
-from ..serializers import RegisterSerializer
+from ..serializers import RegisterSerializer, UserSerializer
+
+
+class MeView(RetrieveAPIView):
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class RegisterView(CreateAPIView):

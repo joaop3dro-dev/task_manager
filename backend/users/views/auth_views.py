@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import (
     TokenBlacklistView,
@@ -42,15 +43,19 @@ class CookieTokenObtainPairView(CookieTokenMixin, TokenObtainPairView):
 
 
 class CookieTokenRefreshView(CookieTokenMixin, TokenRefreshView):
-    def post(self, request, *args, **kwargs):
-        refresh_token = request.COOKIES.get("refresh_token")
+    permission_classes = [AllowAny]
+
+    def get_serializer(self, *args, **kwargs):
+
+        data = kwargs.get("data", {}).copy()
+        print(self.request.COOKIES)
+        refresh_token = self.request.COOKIES.get("refresh_token")
 
         if refresh_token:
-            data = request.data.copy()
             data["refresh"] = refresh_token
-            request._full_data = data
+        kwargs["data"] = data
 
-        return super().post(request, *args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class CookieTokenBlacklistView(TokenBlacklistView):

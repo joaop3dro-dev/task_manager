@@ -3,4 +3,4 @@ from .auth_views import (
     CookieTokenObtainPairView,
     CookieTokenRefreshView,
 )
-from .user_views import RegisterView
+from .user_views import MeView, RegisterView

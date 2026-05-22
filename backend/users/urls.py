@@ -4,6 +4,7 @@ from .views import (
     CookieTokenBlacklistView,
     CookieTokenObtainPairView,
     CookieTokenRefreshView,
+    MeView,
     RegisterView,
 )
 
@@ -12,6 +13,7 @@ auth_patterns = [
     path("login/", CookieTokenObtainPairView.as_view()),
     path("logout/", CookieTokenBlacklistView.as_view()),
     path("refresh/", CookieTokenRefreshView.as_view()),
+    path("me/", MeView.as_view()),
 ]
 
 urlpatterns = [
