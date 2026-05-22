@@ -16,6 +16,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     search_fields = ["name", "description"]
     ordering_fields = ["created_at"]
     queryset = TaskModel.objects.all()
+    ordering = ["-created_at"]
 
     def get_queryset(self):
-        return TaskModel.objects.filter(user=self.request.user)
+        return TaskModel.objects.filter(user=self.request.user).order_by("-created_at")
