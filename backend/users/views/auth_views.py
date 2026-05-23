@@ -14,7 +14,7 @@ class CookieTokenMixin:
             cookie_settings = {
                 "httponly": True,
                 "secure": not settings.DEBUG,
-                "samesite": "Lax",
+                "samesite": "None" if not settings.DEBUG else 'Lax',
             }
 
             if "access" in response.data:
