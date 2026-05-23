@@ -21,7 +21,7 @@ function useAuthHook() {
       const { data: userData } = await meService();
       setUsuario(userData);
       setAuthStatus("authenticated");
-      navigate("/dashboard");
+      navigate("/");
     } catch {
       setErro("Credenciais inválidas. Tente novamente");
     } finally {
